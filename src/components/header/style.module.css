@@ -1,0 +1,13 @@
+.link {
+    color: #fff;
+    margin-left: 20px;
+    text-decoration: none;
+}
+
+.link:first-child {
+    margin-left: 0;
+}
+
+.link:hover {
+    color: #4fecdd;
+}
