@@ -7,6 +7,7 @@ import thunkMiddleware from 'redux-thunk'
 import {persistStore, persistReducer} from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 import {randomFoxReducer} from "../components/randomFox/randomFoxReducer";
+import {authReducer} from "../components/auth/authReducer";
 
 
 const persistConfig = {
@@ -18,7 +19,8 @@ const combineReducer = combineReducers({
     profile: profileReducer,
     chats: chats,
     chatMessage: chatMessage,
-    randomFoxReducer: randomFoxReducer
+    randomFoxReducer: randomFoxReducer,
+    authReducer: authReducer
 })
 
 const persistedReducer = persistReducer(persistConfig, combineReducer)

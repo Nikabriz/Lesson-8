@@ -1,42 +1,33 @@
-import {chatID1, chatID2, chatID3, chatID4} from "../chats/chatsReducer";
-import {v4 as uuidv4} from "uuid";
+import {ref, set} from "firebase/database";
+import {database} from "../../api/initialFireBase";
 
-const initialState = {
-    [chatID1]: [],
-    [chatID2]: [],
-    [chatID3]: [],
-    [chatID4]: [],
-}
+const initialState = {}
 
 
 export const chatMessage = (state = initialState, action) => {
     switch (action.type) {
-        case 'ADDED_CHAT' : {
-            return {...state, [action.id]: []}
-        }
-        case 'REMOVE_CHAT' : {
-            delete state[action.id]
-            return {...state}
-        }
 
-        case 'ADDED_MESSAGE' : {
-            const newMessages = {id: uuidv4(), author: action.author, message: action.message}
-            state[action.chatID].push(newMessages)
-            return {...state}
-        }
         default:
             return state
     }
 }
 
-export const addedMessageAC = (author, message, chatID) => {
-    return {
-        type: 'ADDED_MESSAGE', author, message, chatID
-    }
+
+export const answerBot = (message, chatID) => async () => {
+    const uuid = Date.now()
+
+    setTimeout(async () => {
+        const added = await set(ref(database, '/chats/' + chatID + '/messages/' + uuid), {
+            author: 'bot', message: message, id: uuid
+        });
+    }, 1000)
+
 }
 
-export const answerBot = (message, chatID) => (dispatch) => {
-    setTimeout(() => {
-        dispatch(addedMessageAC('bot', message, chatID))
-    }, 1000)
+export const addChatMessageTC = (author, message, chatID) => async () => {
+    const uuid = Date.now()
+
+    const added = await set(ref(database, '/chats/' + chatID + '/messages/' + uuid), {
+        author: author, message: message, id: uuid
+    });
 }

@@ -1,7 +1,6 @@
 import Chats from "./index";
 import {connect} from "react-redux";
-import {addedChatAC, removeChatAC} from "./chatsReducer";
-
+import {addChatTC, removeChatTC} from "./chatsReducer";
 
 
 const mapStateToProps = (state) => {
@@ -14,10 +13,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         addedChat: (value) => {
-            dispatch(addedChatAC(value))
+            dispatch(addChatTC(value))
         },
         removeChat: (id) => {
-            dispatch(removeChatAC(id))
+            dispatch(removeChatTC(id))
         }
     }
 }

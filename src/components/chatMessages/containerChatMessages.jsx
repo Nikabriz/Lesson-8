@@ -1,6 +1,6 @@
 import {connect} from "react-redux";
 import ChatMessage from "./index";
-import {addedMessageAC, answerBot} from "./chatMessagesReducer";
+import {addChatMessageTC, answerBot} from "./chatMessagesReducer";
 
 
 const mapStateToProps = (state) => {
@@ -13,12 +13,13 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         addedUserMessages: (chatName, value, id) => {
-            dispatch(addedMessageAC(chatName, value, id))
+            dispatch(addChatMessageTC(chatName, value, id))
         },
-        addedBotMessage:(text,id) => {
-            dispatch(answerBot(text,id))
-        }
+        addedAnswerBotMessages: (chatName, value, id) => {
+            dispatch(answerBot(chatName, value, id))
+        },
     }
+
 }
 
 const ChatMessageContainer = connect(mapStateToProps, mapDispatchToProps)(ChatMessage)

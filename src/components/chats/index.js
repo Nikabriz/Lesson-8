@@ -1,27 +1,50 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import s from './style.module.css'
 import {Button, List, ListItem, TextField} from "@mui/material";
-import {NavLink} from "react-router-dom";
+import {Navigate, NavLink} from "react-router-dom";
 import DeleteIcon from '@mui/icons-material/Delete';
 import {useSelector} from "react-redux";
+import {onValue, ref} from "firebase/database";
+import {database} from "../../api/initialFireBase";
 
-const Chats = ({chatName,addedChat, removeChat}) => {
+
+const Chats = ({removeChat, addedChat}) => {
     const [getID, setGetID] = useState()
     const [value, setValue] = useState('')
+    const [data, setData] = useState({})
 
-    const ChatItems = () => chatName?.map((el) => <div className={s.link} key={el.id}>
-            <NavLink to={`/chats/${el.id}`}>
-                <ListItem alignItems="flex-start" className={`${s.chat_item} ${getID === el.id && s.active}`}
-                          onClick={() => setGetID(el.id)}>
+    useEffect(() => {
+        const starCountRef = ref(database, 'chats');
 
-                    <h2>{el.name}</h2>
+        onValue(starCountRef, (snapshot) => {
+            if (snapshot.val() !== null) {
+                setData({...snapshot.val()})
+            } else {
+                setData({})
+            }
+        });
+    }, [])
 
-                </ListItem>
-            </NavLink>
-            <NavLink to={'/chats'}>
-                <DeleteIcon className={s.delete} onClick={() => removeChat(el.id)}/>
-            </NavLink>
-        </div>
+    const inAuth = useSelector((state) => state.authReducer.inAuth)
+    if (!inAuth) return <Navigate to={'/login'}/>
+
+    const ChatItems = () => Object.keys(data)?.map((key) => {
+            return (
+                <div className={s.link} key={key}>
+                    <NavLink to={`/chats/${data[key].id}`}>
+                        <ListItem alignItems="flex-start" className={`${s.chat_item} ${getID === data[key].id && s.active}`}
+                                  onClick={() => setGetID(data[key].id)}>
+
+                            <h2>{data[key].title}</h2>
+
+                        </ListItem>
+                    </NavLink>
+                    <NavLink to={'/chats'}>
+                        <DeleteIcon className={s.delete} onClick={() => removeChat(data[key].id)}/>
+                    </NavLink>
+                </div>
+            )
+        }
     )
 
     return (
@@ -31,7 +54,9 @@ const Chats = ({chatName,addedChat, removeChat}) => {
                            id="outlined-basic"
                            label="Добавить чат" variant="outlined"/>
 
-                <Button className={s.btn} variant="outlined" onClick={() => addedChat(value)}>Добавить чат</Button>
+                <Button className={s.btn} variant="outlined"
+                        onClick={() => addedChat(value)}>Добавить
+                    чат</Button>
             </div>
             <div className={s.chats}>
                 <List sx={{width: '100%', maxWidth: 360, bgcolor: 'background.paper'}}>
